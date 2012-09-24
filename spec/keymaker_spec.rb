@@ -150,19 +150,20 @@ describe Keymaker do
     end
   end
 
-  describe "#execute_query" do
+  describe "#execute_cypher" do
 
     def do_it
-      service.execute_query("START user=node:users(email={email}) RETURN user", email: john_email)
+      # service.execute_cypher("START user=node:users(email={email}) RETURN user", email: john_email)
+      # service.execute_cypher("START n=node(*) RETURN n.email AS email, ID(n) AS neo4j_id", {})
+      service.execute_cypher("START n=node(*) RETURN n.email AS email", {})
+      # service.execute_cypher("START n=node(*) RETURN n AS user", {})
     end
 
     context "given existing values" do
-
       before { service.add_node_to_index(:users, :email, john_email, john_node_id) }
-      let(:query_result) { do_it["data"][0][0]["self"] }
-
       it "performs the cypher query and responds" do
-        query_result.should == john_node_url
+        require 'ruby-debug'; Debugger.start; Debugger.settings[:autoeval] = 1; Debugger.settings[:autolist] = 1; debugger
+        do_it.first.email.should == john_email
       end
 
     end

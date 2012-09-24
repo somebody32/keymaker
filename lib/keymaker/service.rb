@@ -79,8 +79,23 @@ module Keymaker
       batch_get_nodes_request(node_ids)
     end
 
-    def execute_query(query, params)
-      execute_cypher_request({query: query, params: params}).body
+    def execute_cypher(query, params)
+      # TODO: factor this out into proper parser objects or its
+      # own middleware
+      body = execute_cypher_request({query: query, params: params}).body
+      body.data.map do |result|
+        if body.columns.count > 1
+          Hashie::Mash.new(Hash[body.columns.zip(result)])
+        else
+          if result[0].kind_of?(Hashie::Mash)
+            result[0].merge!(result[0].data)
+            result[0].delete(:data)
+            result[0]
+          else
+            Hashie::Mash.new(body.columns[0] => result[0])
+          end
+        end
+      end
     end
 
     def execute_script(script, params={})
