@@ -18,8 +18,8 @@ module Keymaker
 
     def connection
       @connection ||= Faraday.new(url: config.connection_service_root_url) do |conn|
-        conn.use FaradayMiddleware::Mashify
         conn.request :json
+        conn.response :mashify
         conn.response :json, :content_type => /\bjson$/
         conn.adapter :net_http
       end
@@ -80,22 +80,8 @@ module Keymaker
     end
 
     def execute_cypher(query, params)
-      # TODO: factor this out into proper parser objects or its
-      # own middleware
-      body = execute_cypher_request({query: query, params: params}).body
-      body.data.map do |result|
-        if body.columns.count > 1
-          Hashie::Mash.new(Hash[body.columns.zip(result)])
-        else
-          if result[0].kind_of?(Hashie::Mash)
-            result[0].merge!(result[0].data)
-            result[0].delete(:data)
-            result[0]
-          else
-            Hashie::Mash.new(body.columns[0] => result[0])
-          end
-        end
-      end
+      response = execute_cypher_request({query: query, params: params})
+      Keymaker::CypherResponseParser.parse(response.body)
     end
 
     def execute_script(script, params={})
