@@ -34,6 +34,7 @@ require 'keymaker/requests/service_root_request'
 
 require 'keymaker/indexing'
 require 'keymaker/serialization'
+require 'keymaker/persistence'
 require 'keymaker/node'
 
 require 'keymaker/railtie' if defined? Rails::Railtie
