@@ -79,7 +79,7 @@ shared_context "John and Sarah indexed nodes" do
 end
 
 def neo4j_host
-  "http://localhost:7477"
+  "http://#{Keymaker.configuration.server}:#{Keymaker.configuration.port}"
 end
 
 def clear_graph
@@ -88,6 +88,15 @@ end
 
 def clear_users_index
   raw_connection.delete("#{neo4j_host}/db/data/index/node/users")
+end
+
+def make_request_and_get_neo_id method
+  @response = send(method.to_sym)
+  @node_id = get_neo_id @response.body if @response
+end
+
+def get_neo_id response_body, field=:self
+  response_body[field.to_sym].split('/').last if response_body && response_body[field]
 end
 
 def raw_connection

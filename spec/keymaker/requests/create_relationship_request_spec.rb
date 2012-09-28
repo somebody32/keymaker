@@ -18,8 +18,10 @@ describe Keymaker::CreateRelationshipRequest, vcr: true do
     end
 
     it "creates a node with the given properties" do
-      create_relationship_request.body.should include(
-        {"self"=>"#{neo4j_host}/db/data/relationship/18", "data"=>{"location"=>"unknown", "date"=>"1985-02-28"}, "type"=>"birthed"}
+      make_request_and_get_neo_id :create_relationship_request
+
+      @response.body.should include(
+        {"self"=>"#{neo4j_host}/db/data/relationship/#{@node_id}", "data"=>{"location"=>"unknown", "date"=>"1985-02-28"}, "type"=>"birthed"}
       )
     end
 
@@ -42,8 +44,10 @@ describe Keymaker::CreateRelationshipRequest, vcr: true do
       }
     end
     it "creates an empty relationship of type: 'birthed'" do
-      create_relationship_request.body.should include(
-        {"self"=>"#{neo4j_host}/db/data/relationship/21", "data"=>{}, "type"=>"birthed"}
+      make_request_and_get_neo_id :create_relationship_request
+
+      @response.body.should include(
+        {"self"=>"#{neo4j_host}/db/data/relationship/#{@node_id}", "data"=>{}, "type"=>"birthed"}
       )
     end
   end

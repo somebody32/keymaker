@@ -53,57 +53,65 @@ describe Keymaker::BatchRequest, :vcr => true do
       } ]
     end
 
-    let(:results) do
-      [ {"id"=>0,
-         "location"=>"#{neo4j_host}/db/data/node/26",
-         "body"=>{"outgoing_relationships"=>"#{neo4j_host}/db/data/node/26/relationships/out",
-                  "data"=>{"name"=>"John Connor"},
-                  "traverse"=>"#{neo4j_host}/db/data/node/26/traverse/{returnType}",
-                  "all_typed_relationships"=>"#{neo4j_host}/db/data/node/26/relationships/all/{-list|&|types}",
-                  "property"=>"#{neo4j_host}/db/data/node/26/properties/{key}",
-                  "self"=>"#{neo4j_host}/db/data/node/26",
-                  "properties"=>"#{neo4j_host}/db/data/node/26/properties",
-                  "outgoing_typed_relationships"=>"#{neo4j_host}/db/data/node/26/relationships/out/{-list|&|types}",
-                  "incoming_relationships"=>"#{neo4j_host}/db/data/node/26/relationships/in",
-                  "extensions"=>{},
-                  "create_relationship"=>"#{neo4j_host}/db/data/node/26/relationships",
-                  "paged_traverse"=>"#{neo4j_host}/db/data/node/26/paged/traverse/{returnType}{?pageSize,leaseTime}",
-                  "all_relationships"=>"#{neo4j_host}/db/data/node/26/relationships/all",
-                  "incoming_typed_relationships"=>"#{neo4j_host}/db/data/node/26/relationships/in/{-list|&|types}"},
-                  "from"=>"/node"},
-        {"id"=>1,
-         "location"=>"#{neo4j_host}/db/data/node/27",
-         "body"=>{"outgoing_relationships"=>"#{neo4j_host}/db/data/node/27/relationships/out",
-                  "data"=>{"name"=>"Sarah Connor"},
-                  "traverse"=>"#{neo4j_host}/db/data/node/27/traverse/{returnType}",
-                  "all_typed_relationships"=>"#{neo4j_host}/db/data/node/27/relationships/all/{-list|&|types}",
-                  "property"=>"#{neo4j_host}/db/data/node/27/properties/{key}",
-                  "self"=>"#{neo4j_host}/db/data/node/27",
-                  "properties"=>"#{neo4j_host}/db/data/node/27/properties",
-                  "outgoing_typed_relationships"=>"#{neo4j_host}/db/data/node/27/relationships/out/{-list|&|types}",
-                  "incoming_relationships"=>"#{neo4j_host}/db/data/node/27/relationships/in",
-                  "extensions"=>{},
-                  "create_relationship"=>"#{neo4j_host}/db/data/node/27/relationships",
-                  "paged_traverse"=>"#{neo4j_host}/db/data/node/27/paged/traverse/{returnType}{?pageSize,leaseTime}",
-                  "all_relationships"=>"#{neo4j_host}/db/data/node/27/relationships/all",
-                  "incoming_typed_relationships"=>"#{neo4j_host}/db/data/node/27/relationships/in/{-list|&|types}"},
-                  "from"=>"/node"},
-        {"id"=>3,
-         "location"=>"#{neo4j_host}/db/data/relationship/2",
-         "body"=>{"start"=>"#{neo4j_host}/db/data/node/26",
-                  "data"=>{"since"=>"1985"},
-                  "self"=>"#{neo4j_host}/db/data/relationship/2",
-                  "property"=>"#{neo4j_host}/db/data/relationship/2/properties/{key}",
-                  "properties"=>"#{neo4j_host}/db/data/relationship/2/properties",
-                  "type"=>"knows",
-                  "extensions"=>{},
-                  "end"=>"#{neo4j_host}/db/data/node/27"},
-                  "from"=>"#{neo4j_host}/db/data/node/26/relationships"}
-      ]
+    def node_results(id, node_id, name)
+      {
+        "id" => id,
+        "location" => "#{neo4j_host}/db/data/node/#{node_id}",
+        "body" => {
+          "outgoing_relationships" => "#{neo4j_host}/db/data/node/#{node_id}/relationships/out",
+          "data" => { "name" => name },
+          "traverse" => "#{neo4j_host}/db/data/node/#{node_id}/traverse/{returnType}",
+          "all_typed_relationships" => "#{neo4j_host}/db/data/node/#{node_id}/relationships/all/{-list|&|types}",
+          "property" => "#{neo4j_host}/db/data/node/#{node_id}/properties/{key}",
+          "self" => "#{neo4j_host}/db/data/node/#{node_id}",
+          "properties" => "#{neo4j_host}/db/data/node/#{node_id}/properties",
+          "outgoing_typed_relationships" => "#{neo4j_host}/db/data/node/#{node_id}/relationships/out/{-list|&|types}",
+          "incoming_relationships" => "#{neo4j_host}/db/data/node/#{node_id}/relationships/in",
+          "extensions" => {},
+          "create_relationship" => "#{neo4j_host}/db/data/node/#{node_id}/relationships",
+          "paged_traverse" => "#{neo4j_host}/db/data/node/#{node_id}/paged/traverse/{returnType}{?pageSize,leaseTime}",
+          "all_relationships" => "#{neo4j_host}/db/data/node/#{node_id}/relationships/all",
+          "incoming_typed_relationships" => "#{neo4j_host}/db/data/node/#{node_id}/relationships/in/{-list|&|types}",
+        },
+        "from" => "/node"
+      }
+    end
+
+    def relation_results(id, node_id, type, start_id, end_id)
+      {
+        "id" => id,
+        "location" => "#{neo4j_host}/db/data/relationship/#{node_id}",
+        "body" => {
+          "start" => "#{neo4j_host}/db/data/node/#{start_id}",
+          "data" => { "since"=>"1985" },
+          "self" => "#{neo4j_host}/db/data/relationship/#{node_id}",
+          "property" => "#{neo4j_host}/db/data/relationship/#{node_id}/properties/{key}",
+          "properties" => "#{neo4j_host}/db/data/relationship/#{node_id}/properties",
+          "type" => type,
+          "extensions" => {},
+          "end" => "#{neo4j_host}/db/data/node/#{end_id}"
+        },
+        "from" => "#{neo4j_host}/db/data/node/#{start_id}/relationships"
+      }
     end
 
     it "runs the commands and returns their respective results" do
-      batch_request.body.should == results
+      response = batch_request.body
+
+      response.size.should == 3
+
+      results = []
+
+      start_node_id = get_neo_id response[0], :location
+      results << node_results(0, start_node_id, "John Connor")
+
+      end_node_id = get_neo_id response[1], :location
+      results << node_results(1, end_node_id, "Sarah Connor")
+
+      relation_node_id = get_neo_id response[2], :location
+      results << relation_results(3, relation_node_id, "knows", start_node_id, end_node_id)
+
+      response.should == results
     end
 
     it "returns a 200 status code" do

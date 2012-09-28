@@ -11,7 +11,7 @@ describe Keymaker::GetRelationshipTypesRequest, vcr: true do
       Keymaker.service.create_relationship(:loves, john_node_id, sarah_node_id).neo4j_id
     end
     it "returns a unique array of relationship types" do
-      get_relationship_types_request.body.should == ["loves", "knows"]
+      get_relationship_types_request.body.should include "loves", "knows"
     end
   end
 end
