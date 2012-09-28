@@ -20,10 +20,10 @@ module Keymaker::Serialization
   end
 
   def process_attrs(attrs)
-    attrs.symbolize_keys!
+    #attrs.symbolize_keys!
     self.class.properties.delete_if{|p| p == :node_id}.each do |property|
       if property == :active_record_id
-        process_attr(property, attrs[:id].present? ? attrs[:id] : attrs[:active_record_id])
+        process_attr(property, (attrs[:id].nil? or attrs[:id].empty?) ? attrs[:active_record_id] : attrs[:id])
       else
         process_attr(property, attrs[property])
       end

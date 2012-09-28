@@ -62,6 +62,10 @@ module Keymaker
         end
       end
 
+      def create(attrs)
+        new(attrs).create()
+      end
+
     end
 
     def initialize(attrs)
