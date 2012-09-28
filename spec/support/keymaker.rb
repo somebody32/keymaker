@@ -2,7 +2,7 @@ require 'keymaker'
 
 Keymaker.configure do |c|
   c.server = "localhost"
-  c.port = 7477
+  c.port = 7474
 end
 
 shared_context "Keymaker connections" do
