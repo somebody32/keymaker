@@ -63,7 +63,7 @@ module Keymaker
       end
 
       def create(attrs)
-        new(attrs).create()
+        new(attrs).create
       end
 
     end
