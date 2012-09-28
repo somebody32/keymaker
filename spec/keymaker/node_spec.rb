@@ -11,7 +11,6 @@ describe Keymaker::Node do
   it "should create new node" do
     nd = Morpheus.create says: "Choose the pill"
     nd.create.should be_a_kind_of Keymaker::Node
-    puts nd.inspect
   end
 
 end
