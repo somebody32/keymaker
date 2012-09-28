@@ -4,13 +4,13 @@ module Keymaker
 
     extend ActiveSupport::Concern
 
-    def self.included(base)
-      base.class_eval do
+    included do
+      class_eval do
 
         def self.create(attrs)
           new(attrs).create
         end
-      
+
       end
     end
 
