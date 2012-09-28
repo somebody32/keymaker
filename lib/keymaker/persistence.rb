@@ -10,7 +10,7 @@ module Keymaker
         def self.create(attrs)
           new(attrs).create
         end
-        
+      
       end
     end
 
